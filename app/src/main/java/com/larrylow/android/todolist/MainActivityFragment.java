@@ -1,5 +1,7 @@
 package com.larrylow.android.todolist;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -71,7 +74,19 @@ public class MainActivityFragment extends Fragment {
         int id = item.getItemId();
         switch (id){
             case R.id.action_add_task:
-                Toast.makeText(getActivity(), "Add task", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Add a task");
+                builder.setMessage("What do you want to do?");
+                final EditText inputField = new EditText(getActivity());
+                builder.setView(inputField);
+                builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(getActivity(), inputField.getText(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNegativeButton("Cancel", null);
+                builder.create().show();
                 return true;
         }
         return super.onOptionsItemSelected(item);
