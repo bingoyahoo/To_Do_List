@@ -2,6 +2,8 @@ package com.larrylow.android.todolist;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,9 +17,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.larrylow.android.todolist.data.TaskContract;
+import com.larrylow.android.todolist.data.TaskDBHelper;
 
 
 /**
@@ -33,29 +34,26 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootview = inflater.inflate(R.layout.fragment_main, container, false);
+        //Usual inflating of the fragment layout file
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        //Create the fake data
-        String[] fakeData = {
-                "Revise for exam",
-                "Buy milk",
-                "Do laundry",
-                "Call Melissa",
-                "Buy stamps",
-        };
-        //Create the ArrayAdapter by telling "how" (layout),"where" (textview), and " what" (data)
-        List<String> tasks = new ArrayList<String>(Arrays.asList(fakeData));
-        mTaskAdapter = new ArrayAdapter<String>(
-                getActivity(),
-                R.layout.list_item_task,
-                R.id.list_item_task_textview,
-                tasks);
+        //Find the listView
+        ListView listView = (ListView) rootView.findViewById(R.id.listview_tasks);
 
-        //Still need to bind adapter to the ListView
-        ListView listView = (ListView) rootview.findViewById(R.id.listview_tasks);
+        //Get DBHelper to read from database
+        TaskDBHelper helper = new TaskDBHelper(getActivity());
+        SQLiteDatabase sqlDB = helper.getReadableDatabase();
+
+        //Query database to get any existing data
+        Cursor cursor = sqlDB.query(TaskContract.TaskEntry.TABLE_NAME,
+                new String[]{TaskContract.TaskEntry._ID, TaskContract.TaskEntry.COLUMN_TASK},
+                null, null, null, null, null);
+
+        //Create a new TaskAdapter and bind it to ListView
+        mTaskAdapter = new TaskAdapter(getActivity(), cursor);
         listView.setAdapter(mTaskAdapter);
 
-        return rootview;
+        return rootView;
     }
 
     @Override
