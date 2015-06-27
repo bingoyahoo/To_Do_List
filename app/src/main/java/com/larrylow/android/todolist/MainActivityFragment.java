@@ -26,7 +26,7 @@ import com.larrylow.android.todolist.data.TaskDBHelper;
  */
 public class MainActivityFragment extends Fragment {
 
-    ArrayAdapter<String> mTaskAdapter;
+    TaskAdapter mTaskAdapter;
 
     public MainActivityFragment() {
     }
@@ -40,7 +40,7 @@ public class MainActivityFragment extends Fragment {
         //Find the listView
         ListView listView = (ListView) rootView.findViewById(R.id.listview_tasks);
 
-        //Get DBHelper to read from database
+        //Get DBHelper to create new database
         TaskDBHelper helper = new TaskDBHelper(getActivity());
         SQLiteDatabase sqlDB = helper.getReadableDatabase();
 
